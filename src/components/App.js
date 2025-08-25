@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState } from 'react';
 
 function App() {
@@ -8,6 +9,18 @@ function App() {
     if (input.trim()) {
       setMessages([...messages, { text: input, sender: 'user' }]);
       setInput('');
+      fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: input })
+      }).then(() => {
+        // Fetch AI response after sending user message
+        fetch('/api/response').then(response => response.json()).then(data => {
+          setMessages(prevMessages => [...prevMessages, { text: data.response, sender: 'AI' }]);
+        });
+      });
     }
   };
 
