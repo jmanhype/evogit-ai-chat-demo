@@ -7,7 +7,7 @@ function App() {
 
   const handleSend = () => {
     if (input.trim()) {
-      setMessages([...messages, { text: input, sender: 'user' }]);
+      setMessages([...messages, { text: input, sender: 'user', timestamp: new Date().toISOString() }]);
       setInput('');
       fetch('/api/send', {
         method: 'POST',
@@ -18,7 +18,7 @@ function App() {
       }).then(() => {
         // Fetch AI response after sending user message
         fetch('/api/response').then(response => response.json()).then(data => {
-          setMessages(prevMessages => [...prevMessages, { text: data.response, sender: 'AI' }]);
+          setMessages(prevMessages => [...prevMessages, { text: data.response, sender: 'AI', timestamp: new Date().toISOString() }]);
         });
       });
     }
@@ -38,6 +38,7 @@ function App() {
         {messages.map((msg, index) => (
           <div key={index} style={{ marginBottom: '0.5rem' }}>
             <strong>{msg.sender === 'user' ? 'You' : 'AI'}</strong>: {msg.text}
+            <span style={{ marginLeft: '1rem', fontSize: '0.8em', color: '#666' }}>{new Date(msg.timestamp).toLocaleTimeString()}</span>
           </div>
         ))}
       </div>
